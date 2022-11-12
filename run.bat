@@ -1,0 +1,2 @@
+g++ main.cpp -L"/Users/unknown/Downloads/Compressed/SDL2-devel-2.24.1-mingw/SDL2-2.24.1/x86_64-w64-mingw32/lib" -lmingw32 -lSDL2main "/Users/unknown/Downloads/Compressed/SDL2-devel-2.24.1-mingw/SDL2-2.24.1/x86_64-w64-mingw32/lib/libSDL2.a" "libSDL2_image.a" -Wl,--dynamicbase -Wl,--nxcompat -Wl,--high-entropy-va -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lsetupapi -lversion -luuid -I"SDL2" -o iv2.exe
+iv2.exe img.jpg
