@@ -5,6 +5,7 @@
 #include "SDL2/SDL_render.h"
 #include "SDL2/SDL_stdinc.h"
 #include "SDL2/SDL_surface.h"
+#include "config.hpp"
 #include "font.hpp"
 #include <string>
 
@@ -68,7 +69,9 @@ public:
           this->texture = SDL_CreateTextureFromSurface(this->renderer, this->surf);
       }
   void render() override{
+    if(can_draw_text){
       SDL_RenderCopy(this->renderer, this->texture, NULL, &this->container);
       this->pixeloid.render(this->text, this->container.x + 10, this->container.y, this->s);
+    }
   }
 };
