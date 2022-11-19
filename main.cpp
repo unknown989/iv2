@@ -1,3 +1,4 @@
+#include "config.hpp"
 #define SDL_MAIN_HANDLED
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
@@ -9,6 +10,7 @@
 
 #define max(x, y) x ? x > y : y
 #define min(x, y) x ? x < y : y
+
 
 SDL_Window *window;
 SDL_Renderer *renderer;
@@ -77,6 +79,8 @@ int main(int argc, char **argv) {
   int dmx, dmy;
   bool is_mouse_down = false;
   bool is_dragging_image = false;
+  
+  test_path();
 
   Button reset_button(renderer, 10, 10, 120, 40, "Reset", 0xFF00FF00, 15);
   Button zoomin_button(renderer, 10, 60, 120, 40, "Zoom In", 0xFFFFFFFF, 15);

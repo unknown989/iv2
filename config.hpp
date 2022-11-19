@@ -54,7 +54,7 @@ static std::string get_config_path() {
 static void test_path() {
   std::string config_path = get_config_path();
   if (check_dir_exists(config_path)) {
-    FONT_PATH = std::string(config_path) + std::string("pixeloid_fojnt\\");
+    FONT_PATH = std::string(config_path) + std::string("pixeloid_font\\");
     if (check_dir_exists(FONT_PATH)) {
       can_draw_text = true;
     } else {
