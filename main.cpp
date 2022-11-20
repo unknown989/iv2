@@ -3,14 +3,22 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
 #include "font.hpp"
+#include "internet.hpp"
 #include "ui.hpp"
 #include <cstdio>
 #include <math.h>
 #include <string>
 
-#define max(x, y) x ? x > y : y
-#define min(x, y) x ? x < y : y
+#include <regex>
 
+bool validate_url(std::string url) {
+  std::regex url_regex(
+      R"(^(([^:\/?#]+):)?(//([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?)",
+      std::regex::extended);
+  return std::regex_match(url, url_regex);
+}
+
+// Add ability to use URLs and Local files
 
 SDL_Window *window;
 SDL_Renderer *renderer;
@@ -40,10 +48,15 @@ SDL_Rect get_screen_size(SDL_Rect *src) {
 
 int main(int argc, char **argv) {
   if (argc == 1) {
-    log("Please provide an image filename :( .\n");
+    log("Please provide an image filename or URL :( .\n");
     return 1;
   }
-  const char *filename = argv[1];
+  char *filename = argv[1];
+  if (validate_url(filename)) {
+    DownloadURLImage(filename, NULL, (char *)"tmp.jpg");
+    filename = (char*)"./tmp.jpg";
+  }
+
   SDL_Init(SDL_INIT_VIDEO);
   std::string title = std::string("Image Viewer | ") + std::string(filename);
 
@@ -64,6 +77,10 @@ int main(int argc, char **argv) {
   }
 
   SDL_Surface *image = IMG_Load(filename);
+  if (image == nullptr) {
+    log("Failed to load Image, quitting...\n");
+    exit(1);
+  }
   SDL_Texture *image_texture = SDL_CreateTextureFromSurface(renderer, image);
   SDL_Rect image_rect{0, 0, image->w, image->h};
 
@@ -79,7 +96,7 @@ int main(int argc, char **argv) {
   int dmx, dmy;
   bool is_mouse_down = false;
   bool is_dragging_image = false;
-  
+
   test_path();
 
   Button reset_button(renderer, 10, 10, 120, 40, "Reset", 0xFF00FF00, 15);
@@ -168,7 +185,7 @@ int main(int argc, char **argv) {
         }
         case SDLK_h: {
           show_gui = !show_gui;
-        show_instructions = false;
+          show_instructions = false;
         }
         default:
           break;
@@ -179,7 +196,7 @@ int main(int argc, char **argv) {
     SDL_SetRenderDrawColor(renderer, 40, 40, 40, 255);
     SDL_RenderCopy(renderer, image_texture, NULL, &image_rect);
     if (show_gui) {
-      
+
       reset_button.render();
       zoomin_button.render();
       zoomout_button.render();
@@ -189,7 +206,6 @@ int main(int argc, char **argv) {
         pixeloid.render("Press O to Zoom Out", 10, 450, 10);
         pixeloid.render("Press H to hide GUI", 10, 550, 10);
       }
-      
     }
     SDL_RenderPresent(renderer);
   }

@@ -1,2 +1,2 @@
-g++ main.cpp -L"lib/" -lmingw32 -lSDL2main "lib/libSDL2.a" "lib/libSDL2_image.a" -Wl,--dynamicbase -Wl,--nxcompat -Wl,--high-entropy-va -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lole32 -loleaut32 -lshell32 -lsetupapi -lversion -luuid -I"SDL2" -o iv2.exe
-iv2.exe img.jpg
+g++ main.cpp -L"lib/" -lmingw32 -lSDL2main "lib/libSDL2.a" "lib/libSDL2_image.a" -Wl,--dynamicbase -Wl,--nxcompat -Wl,--high-entropy-va -lm -ldinput8 -ldxguid -ldxerr8 -luser32 -lgdi32 -lwinmm -limm32 -lwininet -lole32 -loleaut32 -lshell32 -lsetupapi -lversion -luuid -I"SDL2" -o iv2.exe
+iv2.exe "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Shaqi_jrvej.jpg/375px-Shaqi_jrvej.jpg"
