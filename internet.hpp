@@ -1,6 +1,5 @@
 #include "string.h"
 #include <Windows.h>
-#include <corecrt_wstdio.h>
 #include <cwchar>
 #include <iostream>
 #include <stdio.h>
