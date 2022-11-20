@@ -1,4 +1,4 @@
-#include "config.hpp"
+#include "SDL2/SDL_video.h"
 #define SDL_MAIN_HANDLED
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
@@ -12,9 +12,9 @@
 #include <regex>
 
 bool validate_url(std::string url) {
-  std::regex url_regex(
-      R"(^(([^:\/?#]+):)?(//([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?)",
-      std::regex::extended);
+  std::regex url_regex("\\b((?:https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:, "
+                       ".;]*[-a-zA-Z0-9+&@#/%=~_|])");
+
   return std::regex_match(url, url_regex);
 }
 
@@ -33,16 +33,15 @@ inline void log(const char *c) { std::printf("LOG: %s\n", c); }
 SDL_Rect get_screen_size(SDL_Rect *src) {
 
   SDL_Rect nw{0, 0, src->w, src->h};
-  if (src->w < 800 && src->h < 600) {
-    return nw;
-  }
-  if (src->w > src->h) {
-    nw.h = SDL_GetWindowSurface(window)->h;
-    nw.w = (int)((nw.w * nw.h) / src->h);
-  } else if (src->w < src->h) {
-    nw.h = (int)((nw.h * nw.w) / src->w);
-    nw.w = SDL_GetWindowSurface(window)->w;
-  }
+  // if (src->w < 800 && src->h < 600) {
+  //   return nw;
+  // }
+  float sw = (float)SDL_GetWindowSurface(window)->w / src->h;
+  float sh = (float)SDL_GetWindowSurface(window)->h / src->w;
+
+  nw.w = src->w * sw;
+  nw.h = src->h * sh;
+
   return nw;
 }
 
@@ -54,7 +53,7 @@ int main(int argc, char **argv) {
   char *filename = argv[1];
   if (validate_url(filename)) {
     DownloadURLImage(filename, NULL, (char *)"tmp.jpg");
-    filename = (char*)"./tmp.jpg";
+    filename = (char *)"./tmp.jpg";
   }
 
   SDL_Init(SDL_INIT_VIDEO);
@@ -116,20 +115,16 @@ int main(int argc, char **argv) {
           image_rect.y = 0;
         }
         if (zoomin_button.isLeftClicked(&ev)) {
-          image_rect.w += (int)original_w / zoom_intensity +
-                          (int)(image_rect.w / original_w);
-          image_rect.h += (int)original_h / zoom_intensity +
-                          (int)(image_rect.h / original_h);
+          image_rect.w += (int)(image_rect.w / zoom_intensity);
+          image_rect.h += (int)(image_rect.h / zoom_intensity);
           image_rect.x -= (int)original_w / (zoom_intensity * 2);
           image_rect.y -= (int)original_h / (zoom_intensity * 2);
         }
         if (zoomout_button.isLeftClicked(&ev)) {
-          image_rect.w -= (int)(original_w / zoom_intensity) -
-                          (int)(original_w / image_rect.w);
-          image_rect.h -= (int)(original_h / zoom_intensity) -
-                          (int)(original_h / image_rect.h);
-          image_rect.x += (int)original_w / (zoom_intensity * 2);
-          image_rect.y += (int)original_h / (zoom_intensity * 2);
+          image_rect.w -= (int)(image_rect.w / zoom_intensity);
+          image_rect.h -= (int)(image_rect.h / zoom_intensity);
+          image_rect.x += (int)image_rect.w / (zoom_intensity * 2);
+          image_rect.y += (int)image_rect.h / (zoom_intensity * 2);
         }
       }
 
@@ -159,21 +154,17 @@ int main(int argc, char **argv) {
       if (ev.type == SDL_KEYDOWN) {
         switch (ev.key.keysym.sym) {
         case SDLK_i: {
-          image_rect.w += (int)original_w / zoom_intensity +
-                          (int)(image_rect.w / original_w);
-          image_rect.h += (int)original_h / zoom_intensity +
-                          (int)(image_rect.h / original_h);
+          image_rect.w += (int)(image_rect.w / zoom_intensity);
+          image_rect.h += (int)(image_rect.h / zoom_intensity);
           image_rect.x -= (int)original_w / (zoom_intensity * 2);
           image_rect.y -= (int)original_h / (zoom_intensity * 2);
           break;
         }
         case SDLK_o: {
-          image_rect.w -= (int)(original_w / zoom_intensity) -
-                          (int)(original_w / image_rect.w);
-          image_rect.h -= (int)(original_h / zoom_intensity) -
-                          (int)(original_h / image_rect.h);
-          image_rect.x += (int)original_w / (zoom_intensity * 2);
-          image_rect.y += (int)original_h / (zoom_intensity * 2);
+          image_rect.w -= (int)(image_rect.w / zoom_intensity);
+          image_rect.h -= (int)(image_rect.h / zoom_intensity);
+          image_rect.x += (int)image_rect.w / (zoom_intensity * 2);
+          image_rect.y += (int)image_rect.h / (zoom_intensity * 2);
           break;
         }
         case SDLK_r: {
